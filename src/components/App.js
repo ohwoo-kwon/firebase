@@ -7,7 +7,7 @@ function App() {
 
   return (
     <>
-      <AppRouter isLoggedIn={isLoggedIn} />;
+      <AppRouter isLoggedIn={isLoggedIn} />
       <footer>&copy; {new Date().getFullYear()} Twitter</footer>
     </>
   );
