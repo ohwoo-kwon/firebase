@@ -1,7 +1,9 @@
 import { authService } from "fbase";
 import {
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   signInWithEmailAndPassword,
+  signInWithPopup,
 } from "firebase/auth";
 import { useState } from "react";
 
@@ -33,12 +35,28 @@ const Auth = () => {
       } else {
         data = await signInWithEmailAndPassword(authService, email, password);
       }
+      console.log(data);
     } catch (error) {
       setError(error.message);
     }
   };
   const toggleAccount = () => {
     setNewAccount((prev) => !prev);
+  };
+  const onSocialClick = async (e) => {
+    const {
+      target: { name },
+    } = e;
+    let provider;
+    try {
+      if (name === "google") {
+        provider = new GoogleAuthProvider();
+      }
+      const data = await signInWithPopup(authService, provider);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div>
@@ -66,7 +84,9 @@ const Auth = () => {
         {newAccount ? "SignIn" : "Create Account"}
       </span>
       <div>
-        <button>Continue with Google</button>
+        <button name="google" onClick={onSocialClick}>
+          Continue with Google
+        </button>
       </div>
     </div>
   );
