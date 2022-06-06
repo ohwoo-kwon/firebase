@@ -36,6 +36,17 @@ const Home = ({ userObj }) => {
   const onChange = (e) => {
     setTweet(e.target.value);
   };
+  const onFileChange = (e) => {
+    const {
+      target: { files },
+    } = e;
+    const file = files[0];
+    const reader = new FileReader();
+    reader.onloadend = (finishedEvent) => {
+      console.log(finishedEvent);
+    };
+    reader.readAsDataURL(file);
+  };
 
   return (
     <div>
@@ -47,6 +58,7 @@ const Home = ({ userObj }) => {
           placeholder="What's on your mind?"
           maxLength={120}
         />
+        <input type="file" accept="image/*" onChange={onFileChange} />
         <input type="submit" value="Tweet" />
       </form>
       <div>
