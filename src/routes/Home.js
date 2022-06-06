@@ -1,3 +1,4 @@
+import Tweet from "components/Tweet";
 import { dbService } from "fbase";
 import {
   addDoc,
@@ -49,8 +50,12 @@ const Home = ({ userObj }) => {
         <input type="submit" value="Tweet" />
       </form>
       <div>
-        {tweets.map(({ text, id }) => (
-          <h4 key={id}>{text}</h4>
+        {tweets.map((tweetObj) => (
+          <Tweet
+            key={tweetObj.id}
+            tweetObj={tweetObj}
+            isOwner={tweetObj.uid === userObj.uid}
+          />
         ))}
       </div>
     </div>
