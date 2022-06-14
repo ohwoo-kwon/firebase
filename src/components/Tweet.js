@@ -1,5 +1,6 @@
-import { dbService } from "fbase";
+import { dbService, storageService } from "fbase";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import { useState } from "react";
 
 const Tweet = ({ tweetObj, isOwner }) => {
@@ -9,6 +10,7 @@ const Tweet = ({ tweetObj, isOwner }) => {
     const ok = window.confirm("Do you want to delete this tweet?");
     if (ok) {
       await deleteDoc(doc(dbService, `tweets/${tweetObj.id}`));
+      await deleteObject(ref(storageService, tweetObj.attachmentUrl));
     }
   };
   const toggleEditing = () => setEditing((prev) => !prev);
