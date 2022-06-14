@@ -1,5 +1,5 @@
 import Tweet from "components/Tweet";
-import { dbService } from "fbase";
+import { dbService, storageService } from "fbase";
 import {
   addDoc,
   collection,
@@ -7,7 +7,9 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
+import { ref, uploadString } from "firebase/storage";
 import { useEffect, useState } from "react";
+import { v4 } from "uuid";
 
 const Home = ({ userObj }) => {
   const [tweet, setTweet] = useState("");
@@ -28,12 +30,15 @@ const Home = ({ userObj }) => {
   }, []);
   const onSubmit = async (e) => {
     e.preventDefault();
-    await addDoc(collection(dbService, "tweets"), {
+    const fileRef = ref(storageService, `${userObj.uid}/${v4()}`);
+    const response = await uploadString(fileRef, attachment, "data_url");
+    console.log(response);
+    /* await addDoc(collection(dbService, "tweets"), {
       text: tweet,
       createdAt: Date.now(),
       uid: userObj.uid,
     });
-    setTweet("");
+    setTweet(""); */
   };
   const onChange = (e) => {
     setTweet(e.target.value);
