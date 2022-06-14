@@ -7,14 +7,14 @@ import {
   orderBy,
   query,
 } from "firebase/firestore";
-import { ref, uploadString } from "firebase/storage";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
 
 const Home = ({ userObj }) => {
   const [tweet, setTweet] = useState("");
   const [tweets, setTweets] = useState([]);
-  const [attachment, setAttachment] = useState();
+  const [attachment, setAttachment] = useState("");
 
   useEffect(() => {
     onSnapshot(
@@ -30,16 +30,30 @@ const Home = ({ userObj }) => {
   }, []);
   const onSubmit = async (e) => {
     e.preventDefault();
-    const fileRef = ref(storageService, `${userObj.uid}/${v4()}`);
-    const response = await uploadString(fileRef, attachment, "data_url");
-    console.log(response);
-    /* await addDoc(collection(dbService, "tweets"), {
+    let attachmentUrl = "";
+
+    if (attachment !== "") {
+      const attachmentRef = ref(storageService, `${userObj.uid}/${v4()}`);
+      const response = await uploadString(
+        attachmentRef,
+        attachment,
+        "data_url"
+      );
+      attachmentUrl = await getDownloadURL(response.ref);
+    }
+
+    const tweetObj = {
       text: tweet,
       createdAt: Date.now(),
       uid: userObj.uid,
-    });
-    setTweet(""); */
+      attachmentUrl,
+    };
+
+    await addDoc(collection(dbService, "tweets"), tweetObj);
+    setTweet("");
+    setAttachment("");
   };
+
   const onChange = (e) => {
     setTweet(e.target.value);
   };
@@ -59,7 +73,7 @@ const Home = ({ userObj }) => {
   };
 
   const onClearAttachment = () => {
-    setAttachment(null);
+    setAttachment("");
   };
 
   return (
